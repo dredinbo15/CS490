@@ -1,0 +1,14 @@
+[Unit]
+Description=Home security hub (MQTT + YAMNet + alerts)
+After=network-online.target mosquitto.service
+Wants=network-online.target
+
+[Service]
+User=__USER__
+WorkingDirectory=__DIR__
+ExecStart=__DIR__/.venv/bin/python -m hub.service
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

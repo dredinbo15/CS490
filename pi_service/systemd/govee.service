@@ -1,0 +1,14 @@
+[Unit]
+Description=Govee Bluetooth thermometer reader
+After=bluetooth.target mosquitto.service
+Wants=bluetooth.target
+
+[Service]
+User=__USER__
+WorkingDirectory=__DIR__
+ExecStart=__DIR__/.venv/bin/python -m hub.govee
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

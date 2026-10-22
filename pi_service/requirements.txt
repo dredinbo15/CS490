@@ -1,0 +1,5 @@
+paho-mqtt>=2.0
+numpy
+pyyaml
+ai-edge-litert   # TensorFlow Lite runtime for YAMNet
+bleak            # Bluetooth, for the Govee thermometers

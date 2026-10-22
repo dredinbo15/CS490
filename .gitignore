@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+.venv/
+pi_service/data/
+pi_service/models/
+pi_service/config.local.yaml
+firmware/**/.pio/
+firmware/**/include/secrets.h

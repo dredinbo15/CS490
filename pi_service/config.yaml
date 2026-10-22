@@ -1,0 +1,52 @@
+# Pi home security hub configuration.
+# Copy this file to config.local.yaml to keep personal settings (like your ntfy topic)
+# out of Git; the service loads config.local.yaml first if it exists.
+
+mqtt:
+  host: localhost          # Mosquitto runs on the Pi itself
+  port: 1883
+  client_id: pi-hub
+  topic_prefix: home       # topics look like home/audio/kitchen/clip
+
+storage:
+  database: data/hub.db    # SQLite file, created on first run
+  save_clips: true         # keep every received clip; great extra training data
+  clips_dir: data/clips
+
+classifier:
+  # "yamnet" for the real model, "dummy" to test the pipeline without a model
+  # (the dummy just treats any loud clip as glass - never use it for real).
+  backend: yamnet
+  model_path: models/yamnet.tflite
+  class_map_path: models/yamnet_class_map.csv
+  # YAMNet class names that count as glass. Names not found in the class map are skipped.
+  glass_classes: ["Glass", "Shatter", "Chink, clink", "Breaking"]
+  glass_threshold: 0.26    # glass score needed to count as a detection; tune with real clips
+  # Optional: your own trained classifier (Phase 2). Leave null to use YAMNet alone.
+  head_model_path: null
+  head_glass_index: 0      # which output of your head model means "glass"
+
+alerts:
+  multi_mic_window_s: 2.0  # 2+ different mics detecting glass within this window = high confidence
+  glass_cooldown_s: 30     # don't repeat the same glass alert level more often than this
+  node_offline_after_s: 120
+  temp_units: F            # units for the thresholds below and for messages (F or C)
+  freeze_below: 45         # pipes-at-risk warning
+  overheat_above: 95
+  rapid_change: 5          # degrees change ...
+  rapid_window_s: 300      # ... within this many seconds
+  temp_cooldown_s: 1800    # don't repeat the same temperature alert more often than this
+
+notify:
+  # Free push notifications: install the ntfy app on your phone and subscribe to this topic.
+  # Pick something long and random; anyone who knows the topic name can read it.
+  ntfy_topic: ""           # empty = log alerts only, no phone notifications
+  ntfy_server: https://ntfy.sh
+
+govee:
+  publish_every_s: 30      # Govees advertise every few seconds; publish at most this often
+  # Map each sensor's Bluetooth address to a room name. Run `python -m hub.govee --discover`
+  # to list nearby sensors and their addresses.
+  sensors: {}
+  #   "A4:C1:38:3A:42:C2": living_room
+  #   "A4:C1:38:E4:C3:8C": second_floor
